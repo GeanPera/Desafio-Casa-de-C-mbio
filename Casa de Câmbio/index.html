@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Converção</title>
+        <style>
+            *{
+                margin: 0px;
+                padding: 0px;      
+            }
+            body{
+                background-repeat: no-repeat;
+                background: rgba(88, 88, 88, 0.685)
+            
+            }
+            #idDivCentral{
+                margin: auto;
+                width: 400px;
+                margin-top: 10px;     
+            }
+            div{
+                margin: 15px;
+                text-align: center;
+            }
+            fieldset{   
+                background: white;
+                background-image: url("fundo.jpg");
+                padding: 10%; 
+                border: 2px  solid black;
+            }
+            #idForm{
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .clFundoForm{
+                background-color: rgba(255, 255, 255, 0.473);
+                border-radius: 50px;
+            }
+            .clTela{
+                text-align: left;
+                padding-left: 15%;
+                padding-right: 15%;
+            }
+            input{
+                padding: 2px;
+                background: white;
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="idDivCentral">
+            <fieldset>
+                <div class="clFundoForm">
+                    <form action="" id="idForm">
+                        <div class="clTela">
+                            <h2>Casa de Câmbio</h2>
+                        </div>
+                        <div class="clTela">
+                            <p>Escolha a Operação</p>
+                        </div>
+                        <div class="clTela">
+                            <input type="radio" name="nmEscolha" id="idCompra" checked>
+                            <label for="idCompra">Comprar</label>
+                        </div>
+                        <div class="clTela">
+                            <input type="radio" name="nmEscolha" id="idVenda">
+                            <label for="idVenda">Vender</label>
+                        </div>
+                        <div class="clTela">
+                            <p>Escolha a Moeda</p>
+                            <!-- Escolha moeda de entrada -->
+                            <select name="nmPrimeiraMoeda" id="idPrimeiraMoeda">
+                                <option value="AUD">Dólar australiano</option>
+                                <option value="CAD">Dólar canadense</option>
+                                <option value="CHF">Franco suíço</option>
+                                <option value="DKK">Coroa dinamarquesa</option>
+                                <option value="EUR">Euro</option>
+                                <option value="GBP">Libra Esterlina</option>
+                                <option value="JPY">Iene</option>
+                                <option value="NOK">Coroa norueguesa</option>
+                                <option value="SEK">Coroa sueca</option>
+                                <option value="USD">Dólar dos Estados Unidos</option>
+                            </select>
+                        </div>
+                        <div class="clTela">
+                            <p>Data</p>
+                            <input type="text" name="nmData" id="idData" placeholder=" mm-dd-aaaa">
+                        </div>
+                        <div class="clTela">
+                            <p>Converter para</p>
+                            <!-- Escolha moeda de saida -->
+                            <select name="nmSegundaMoeda" id="idSegundaMoeda">
+                                <option value="USD">Dólar dos Estados Unidos</option>
+                                <option value="SEK">Coroa sueca</option>
+                                <option value="NOK">Coroa norueguesa</option>
+                                <option value="JPY">Iene</option>
+                                <option value="GBP">Libra Esterlina</option>
+                                <option value="EUR">Euro</option>
+                                <option value="DKK">Coroa dinamarquesa</option>
+                                <option value="CHF">Franco suíço</option>
+                                <option value="CAD">Dólar canadense</option>
+                                <option value="AUD">Dólar australiano</option>
+                            </select>
+                        </div>
+                        <div class="clTela">
+                            <p>Valor para a Converção</p>
+                            <input type="number" name="nmValorInicial" id="idValorInicial" placeholder=" Valor...">
+                        </div>
+                        <div class="clTela">
+                            <button type="button" id="idVerificarCotacao">Converter</button>
+                        </div>
+                        <div class="clTela">
+                            <p>Valor Convertido</p>
+                            <input type="number" name="nmValorFinal" id="idValorFinal" disabled>
+                        </div>
+                        <div>
+                            <output id="idOut"></output>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </div>
+        <script>
+            /*
+                Entrada:
+                    Declarar variaveis
+                    Botão para iniciar o processamento
+            */
+            var btVerificarCotacao = document.getElementById("idVerificarCotacao")
+            btVerificarCotacao.onclick = async function () {
+                inicializacao()
+                await pegarCotacao()
+                resultado = await calcular()
+                imprimir()
+            }
+            function inicializacao() {
+                let primeiraMoeda
+                let segundaMoeda
+                let data
+                let cotacaoMoeda1Compra
+                let cotacaoMoeda2Compra
+                let cotacaoMoeda1Venda
+                let cotacaoMoeda2Venda
+                let primeiraMoedaObj
+                let segundaMoedaObj
+                let resultado
+            }
+            /*
+                Processamento:
+                    Pegar o JSON com a API
+                    Separar a cotação de compra ou venda
+                    Fazer o calculo da conversão
+            */
+            async function pegarCotacao() {
+                data = document.querySelector("#idData").value
+                primeiraMoedaObj = await pegarPrimeiraMoeda()
+                segundaMoedaObj = await pegarSegundaMoeda()
+                if (document.querySelector("#idCompra").checked) {
+                    cotacaoMoeda1Compra = await capturarCotacaoMoeda1Compra()
+                    cotacaoMoeda2Compra = await capturarCotacaoMoeda2Compra()
+                }
+                if (document.querySelector("#idVenda").checked) {
+                    cotacaoMoeda1Venda = await capturarCotacaoMoeda1Venda()
+                    cotacaoMoeda2Venda = await capturarCotacaoMoeda2Venda()
+                }
+            }
+            async function pegarPrimeiraMoeda() {
+                primeiraMoeda = await fetch("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='"+ document.querySelector("#idPrimeiraMoeda").value +"'&@dataCotacao='"+data+"'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
+                return primeiraMoeda.json()
+            }
+            async function pegarSegundaMoeda() {
+                segundaMoeda = await fetch("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='"+ document.querySelector("#idSegundaMoeda").value +"'&@dataCotacao='"+data+"'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
+                return segundaMoeda.json()
+            }
+            async function capturarCotacaoMoeda1Compra() {
+                cotacaoMoeda1Compra = primeiraMoedaObj.value[primeiraMoedaObj.value.length - 1].cotacaoCompra
+                return cotacaoMoeda1Compra
+            }
+            async function capturarCotacaoMoeda2Compra() {
+                cotacaoMoeda2Compra = segundaMoedaObj.value[segundaMoedaObj.value.length - 1].cotacaoCompra
+                return cotacaoMoeda2Compra
+            }
+            async function capturarCotacaoMoeda1Venda() {
+                cotacaoMoeda1Compra = primeiraMoedaObj.value[primeiraMoedaObj.value.length - 1].cotacaoVenda
+                return cotacaoMoeda1Compra
+            }
+            async function capturarCotacaoMoeda2Venda() {
+                cotacaoMoeda2Compra = segundaMoedaObj.value[segundaMoedaObj.value.length - 1].cotacaoVenda
+                return cotacaoMoeda2Compra
+            }
+            async function calcular() {
+                let valorInicial = Number(document.querySelector("#idValorInicial").value)
+                resultado = (cotacaoMoeda1Compra * valorInicial / cotacaoMoeda2Compra).toFixed(2)
+                return resultado
+            }
+            /*
+                Saída:
+                    Mostrar os dados no console
+                    Mostra resultado da converção na tela
+            */
+            function imprimir() {
+                console.log(document.querySelector("#idPrimeiraMoeda").value)
+                console.log(cotacaoMoeda1Compra)
+                console.log(primeiraMoedaObj)
+                console.log(document.querySelector("#idSegundaMoeda").value)
+                console.log(cotacaoMoeda2Compra)
+                console.log(segundaMoedaObj)
+                document.querySelector("#idValorFinal").value = resultado
+            }
+        </script>
+    </body>
+</html>
