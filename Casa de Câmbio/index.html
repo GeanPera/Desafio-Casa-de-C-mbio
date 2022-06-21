@@ -35,7 +35,7 @@
                 padding-bottom: 10px;
             }
             .clFundoForm{
-                background-color: rgba(255, 255, 255, 0.473);
+                background-color: rgba(255, 255, 255, 0.438);
                 border-radius: 50px;
             }
             .clTela{
@@ -45,7 +45,7 @@
             }
             input{
                 padding: 2px;
-                background: white;
+                background: rgb(255, 255, 255);
                 border: 1px solid black;
             }
         </style>
@@ -84,10 +84,6 @@
                                 <option value="SEK">Coroa sueca</option>
                                 <option value="USD">Dólar dos Estados Unidos</option>
                             </select>
-                        </div>
-                        <div class="clTela">
-                            <p>Data</p>
-                            <input type="text" name="nmData" id="idData" placeholder=" mm-dd-aaaa">
                         </div>
                         <div class="clTela">
                             <p>Converter para</p>
@@ -139,7 +135,7 @@
             function inicializacao() {
                 let primeiraMoeda
                 let segundaMoeda
-                let data
+                let data = new Date()
                 let cotacaoMoeda1Compra
                 let cotacaoMoeda2Compra
                 let cotacaoMoeda1Venda
@@ -155,7 +151,8 @@
                     Fazer o calculo da conversão
             */
             async function pegarCotacao() {
-                data = document.querySelector("#idData").value
+                let data
+                await pegarData()
                 primeiraMoedaObj = await pegarPrimeiraMoeda()
                 segundaMoedaObj = await pegarSegundaMoeda()
                 if (document.querySelector("#idCompra").checked) {
@@ -166,6 +163,21 @@
                     cotacaoMoeda1Venda = await capturarCotacaoMoeda1Venda()
                     cotacaoMoeda2Venda = await capturarCotacaoMoeda2Venda()
                 }
+            }
+            function pegarData() {
+                let date = new Date()
+                let dia = date.getDate()
+                if (dia < 10) {
+                    dia = "0" + dia
+                }
+                let mes = date.getMonth()+1
+                if (mes < 10) {
+                    mes = "0" + mes
+                }
+                let ano = date.getFullYear()
+                data = (mes + "-" + dia + "-" + ano)
+                return data
+                console.log(data)
             }
             async function pegarPrimeiraMoeda() {
                 primeiraMoeda = await fetch("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='"+ document.querySelector("#idPrimeiraMoeda").value +"'&@dataCotacao='"+data+"'&$top=100&$format=json&$select=paridadeCompra,paridadeVenda,cotacaoCompra,cotacaoVenda,dataHoraCotacao,tipoBoletim")
